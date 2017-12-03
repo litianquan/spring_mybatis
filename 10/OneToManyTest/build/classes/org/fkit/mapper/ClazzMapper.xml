@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="org.fkit.mapper.ClazzMapper">
+
+	<!-- 根据id查询班级信息，返回resultMap -->
+	  <select id="selectClazzById" parameterType="int" resultMap="clazzResultMap">
+	  	SELECT * FROM tb_clazz  WHERE id = #{id}
+	  </select>
+	  
+	   <!-- 映射Clazz对象的resultMap -->
+	<resultMap type="org.fkit.domain.Clazz" id="clazzResultMap">
+		<id property="id" column="id"/>
+		<result property="code" column="code"/>
+		<result property="name" column="name"/>
+		<!-- 一对多关联映射:collection fetchType="lazy"表示懒加载  -->
+		<collection property="students" javaType="ArrayList"
+	  column="id" ofType="org.fkit.domain.Student"
+	  select="org.fkit.mapper.StudentMapper.selectStudentByClazzId"
+	  fetchType="lazy">
+	  	<id property="id" column="id"/>
+	  	<result property="name" column="name"/>
+	  	<result property="sex" column="sex"/>
+	  	<result property="age" column="age"/>
+	  </collection>
+	</resultMap>
+	
+	
+  
+
+</mapper>

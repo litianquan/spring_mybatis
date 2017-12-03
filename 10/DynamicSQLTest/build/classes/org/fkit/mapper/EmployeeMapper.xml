@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="org.fkit.mapper.EmployeeMapper">
+
+	<select id="selectEmployeeWithId" parameterType="int" resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee where id = #{id}
+  </select>
+	
+  <!-- if -->
+  <select id="selectEmployeeByIdLike" 
+  	resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee WHERE state = 'ACTIVE'
+  	<!-- 可选条件，如果传进来的参数有id属性，则加上id查询条件 -->
+  	<if test="id != null ">
+  		and id = #{id}
+  	</if>
+  </select>
+  
+  <!-- if -->
+  <select id="selectEmployeeByLoginLike" 
+  	resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee WHERE state = 'ACTIVE'
+  	<!-- 两个可选条件，例如登录功能的登录名和密码查询 -->
+  	<if test="loginname != null and password != null">
+  		and loginname = #{loginname} and password = #{password}
+  	</if>
+  </select>
+  
+  <!-- choose（when、otherwise） -->
+  <select id="selectEmployeeChoose" 
+  	parameterType="hashmap" 
+  	resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee WHERE state = 'ACTIVE'
+  	<!-- 如果传入了id，就根据id查询，没有传入id就根据loginname和password查询，否则查询sex等于男的数据 -->
+  	<choose>
+  		<when test="id != null">
+  			and id = #{id}
+  		</when>
+  		<when test="loginname != null and password != null">
+  			and loginname = #{loginname} and password = #{password}
+  		</when>
+  		<otherwise>
+  			and sex = '男'
+  		</otherwise>
+  	</choose>
+  </select>
+  
+  <select id="findEmployeeLike"  
+  	resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee WHERE 
+  	<if test="state != null ">
+  		state = #{state}
+  	</if>
+  	<if test="id != null ">
+  		and id = #{id}
+  	</if>
+  	<if test="loginname != null and password != null">
+  		and loginname = #{loginname} and password = #{password}
+  	</if>
+  </select>
+  
+  <!-- where -->
+  <select id="selectEmployeeLike" 
+  	resultType="org.fkit.domain.Employee">
+  	SELECT * FROM tb_employee  
+  	<where>
+  		<if test="state != null ">
+  			state = #{state}
+	  	</if>
+	  	<if test="id != null ">
+	  		and id = #{id}
+	  	</if>
+	  	<if test="loginname != null and password != null">
+	  		and loginname = #{loginname} and password = #{password}
+	  	</if>
+  	</where>
+  </select>
+  
+  <!-- set -->
+  <update id="updateEmployeeIfNecessary" 
+  	parameterType="org.fkit.domain.Employee">
+	  update tb_employee
+	    <set>
+	      <if test="loginname != null">loginname=#{loginname},</if>
+	      <if test="password != null">password=#{password},</if>
+	      <if test="name != null">name=#{name},</if>
+	      <if test="sex != null">sex=#{sex},</if>
+	      <if test="age != null">age=#{age},</if>
+	      <if test="phone != null">phone=#{phone},</if>
+	      <if test="sal != null">sal=#{sal},</if>
+	      <if test="state != null">state=#{state}</if>
+	    </set>
+	  where id=#{id}
+	</update>
+  
+  <!-- foreach -->
+  <select id="selectEmployeeIn" resultType="org.fkit.domain.Employee">
+	  SELECT *
+	  FROM tb_employee
+	  WHERE ID in
+	  <foreach item="item" index="index" collection="list"
+	      open="(" separator="," close=")">
+	        #{item}
+	  </foreach>
+  </select>
+  
+  <!-- bind -->
+	<select id="selectEmployeeLikeName"  resultType="org.fkit.domain.Employee">
+	  <bind name="pattern" value="'%' + _parameter.getName() + '%'" />
+	  	SELECT * FROM tb_employee
+	  	WHERE loginname LIKE #{pattern}
+	</select>
+
+</mapper>

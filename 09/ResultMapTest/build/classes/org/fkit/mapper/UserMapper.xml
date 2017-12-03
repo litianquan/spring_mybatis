@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="org.fkit.mapper.UserMapper">
+
+  <!-- select操作 
+  resultType="map"表示返回的是一个Map对象
+  使用列名做key，值做value -->
+  <select id="selectUser" resultType="map">
+  	SELECT * FROM TB_USER
+  </select>
+ 
+  <resultMap id="userResultMap" type="org.fkit.domain.User">
+	  <id property="id" column="user_id" />
+	  <result property="name" column="user_name"/>
+	  <result property="sex" column="user_sex"/>
+	  <result property="age" column="user_age"/>
+	</resultMap>
+  
+   <select id="selectUser2" resultMap="userResultMap">
+  	SELECT * FROM TB_USER2
+  </select>
+  
+  
+  <!-- 映射学生对象的resultMap -->
+  <resultMap id="studentResultMap" type="org.fkit.domain.Student">
+	  <id property="id" column="id" />
+	  <result property="name" column="name"/>
+	  <result property="sex" column="sex"/>
+	  <result property="age" column="age"/>
+	  <!-- 关联映射 -->
+	  <association property="clazz" column="clazz_id" 
+	  javaType="org.fkit.domain.Clazz"
+	  select="selectClazzWithId"/>
+	</resultMap>
+	
+  <!-- 根据班级id查询班级 -->
+  <select id="selectClazzWithId" resultType="org.fkit.domain.Clazz">
+  	SELECT * FROM TB_CLAZZ where id = #{id}
+  </select>
+  
+  <!-- 查询所有学生信息 -->
+  <select id="selectStudent" resultMap="studentResultMap">
+  	SELECT * FROM TB_STUDENT
+  </select>
+  
+  <!-- 映射班级对象的resultMap -->
+  <resultMap id="clazzResultMap" type="org.fkit.domain.Clazz">
+	  <id property="id" column="id" />
+	  <result property="code" column="code"/>
+	  <!-- 班级的学生属性，因为一个班级有多个学生，所以该属性是一个集合 -->
+	  <collection property="students" javaType="ArrayList"
+	  column="id" ofType="org.fkit.domain.Student" 
+	  select="selectStudentWithId"/>
+	</resultMap>
+	
+	<!-- 根据班级id查询学生 -->
+	<select id="selectStudentWithId" resultType="org.fkit.domain.Student">
+  		SELECT * FROM TB_STUDENT where clazz_id = #{id}
+  	</select>
+  	
+	<!-- 查询所有班级信息 -->
+  <select id="selectClazz" resultMap="clazzResultMap">
+  	SELECT * FROM TB_CLAZZ
+  </select>
+  
+</mapper>

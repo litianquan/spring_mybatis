@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="org.fkit.mapper.UserMapper">
+	
+  <!-- 根据id查询User -->
+  <select id="selectUserById" parameterType="int" 
+  resultType="org.fkit.domain.User">
+  	SELECT * FROM TB_USER WHERE id = #{id}
+  </select>
+  
+  <!-- 查询所有User -->
+  <select id="selectAllUser" resultType="org.fkit.domain.User">
+  	SELECT * FROM TB_USER 
+  </select>
+  
+  <!-- 根据id删除User -->
+  <delete id="deleteUserById" parameterType="int">
+  	DELETE FROM TB_USER WHERE id = #{id}
+  </delete>
+  
+
+</mapper>

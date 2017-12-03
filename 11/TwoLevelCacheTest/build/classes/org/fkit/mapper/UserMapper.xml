@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="org.fkit.mapper.UserMapper">
+	
+	<!-- 开启二级缓存 
+   	回收策略为先进先出
+   	自动刷新时间60s
+   	最多缓存512个引用对象
+   	只读
+   -->
+	<cache 
+	eviction="LRU"  
+	flushInterval="60000" 
+	size="512" 
+	readOnly="true"/> 
+	
+  <!-- 根据id查询User -->
+  <select id="selectUserById" parameterType="int" 
+  resultType="org.fkit.domain.User" useCache='false'>
+  	SELECT * FROM TB_USER WHERE id = #{id}
+  </select>
+  
+  <!-- 查询所有User -->
+  <select id="selectAllUser" resultType="org.fkit.domain.User">
+  	SELECT * FROM TB_USER 
+  </select>
+  
+  <!-- 根据id删除User -->
+  <select id="deleteUserById" parameterType="int">
+  	DELETE FROM TB_USER WHERE id = #{id}
+  </select>
+  
+
+</mapper>
